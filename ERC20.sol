@@ -5,8 +5,9 @@ pragma solidity 0.8.0;
 import "../interfaces/IERC20.sol";
 import "../ownership/Ownable.sol";
 import "../lifecycle/Pausable.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract ERC20 is IERC20, Ownable, Pausable {
+contract ERC20 is ReentrancyGuard, IERC20, Ownable, Pausable {
 
     string public name;
     string public symbol;
@@ -35,7 +36,7 @@ contract ERC20 is IERC20, Ownable, Pausable {
     function transfer(
         address _to, 
         uint256 _value
-    ) external override whenNotPaused returns (bool) {
+    ) external nonReentrant override whenNotPaused returns (bool) {
         require(_to != address(0), 'ERC20: to address is not valid');
         require(_value <= _balances[msg.sender], 'ERC20: insufficient balance');
 
@@ -68,7 +69,7 @@ contract ERC20 is IERC20, Ownable, Pausable {
         address _from, 
         address _to, 
         uint256 _value
-    ) external override whenNotPaused returns (bool) {
+    ) external nonReentrant override whenNotPaused returns (bool) {
         require(_from != address(0), 'ERC20: from address is not valid');
         require(_to != address(0), 'ERC20: to address is not valid');
         require(_value <= _balances[_from], 'ERC20: insufficient balance');

@@ -2,7 +2,9 @@
 
 pragma solidity 0.8.0;
 
-contract Ownable {
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+
+contract Ownable is ReentrancyGuard {
 
   address private owner;
 
@@ -25,7 +27,7 @@ contract Ownable {
     return msg.sender == owner;
   }
 
-  function transferOwnership(address _newOwner) external onlyOwner {
+  function transferOwnership(address _newOwner) external nonReentrant onlyOwner {
     require(_newOwner != address(0), 'Ownable: address is not valid');
     owner = _newOwner;
     emit NewOwner(msg.sender, _newOwner);

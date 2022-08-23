@@ -8,6 +8,7 @@ import "../lifecycle/Pausable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 contract ERC20 is ReentrancyGuard, IERC20, Ownable, Pausable {
+    bool internal locked;
 
     string public name;
     string public symbol;
@@ -31,6 +32,13 @@ contract ERC20 is ReentrancyGuard, IERC20, Ownable, Pausable {
         decimals = _decimals;
         totalSupply = _totalSupply;
         _balances[msg.sender] = _totalSupply;
+    }
+
+    modifier noReentrant() {
+        require(!locked, "No re-entrancy");
+        locked = true;
+        _;
+        locked = false;
     }
 
     function transfer(
